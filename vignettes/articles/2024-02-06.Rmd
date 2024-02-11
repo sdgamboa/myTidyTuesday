@@ -1,0 +1,87 @@
+---
+title: "2024-02-06 World Heritage Sites"
+output:
+    html_document:
+        toc: true
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message=FALSE}
+library(tidytuesdayR)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(microshades)
+```
+
+## Data
+
+```{r, message=FALSE}
+tuesdata <- tt_load('2024-02-06')
+dat <- tuesdata$heritage
+```
+
+### Data Dictionary
+
+This was taken directly from the README file in the official tidytuesday
+[site](https://github.com/rfordatascience/tidytuesday/blob/master/data/2024/2024-02-06/readme.md).
+
+#### `heritage.csv`
+
+|variable |class     |description |
+|:--------|:---------|:-----------|
+|country  |character   |Country |
+|2004     |integer   |Number of UNESCO World Heritage sites in 2004 |
+|2022     |integer   |Number of UNESCO World Heritage sites in 2022 |
+
+## Explore data
+
+```{r}
+dim(dat)
+```
+```{r}
+glimpse(dat)
+```
+
+```{r}
+knitr::kable(dat)
+```
+
+## Tidy data
+
+```{r}
+tidyDat <- dat |> 
+    pivot_longer(names_to = "year", values_to = "n", cols = 2:last_col())
+knitr::kable(tidyDat)
+```
+
+## Visualization
+
+```{r}
+set.seed(3)
+(
+    p1 <- tidyDat |> 
+        ggplot(aes(country, n)) + 
+        geom_col(aes(fill = year), color = "black", position = "dodge") +
+        labs(
+            x = "Country", y = "Number of heritage sites"
+        ) +
+        scale_fill_manual(
+            name = "Year",
+            values = unname(palette.colors())[c(3, 4)]
+        ) +
+        theme_bw()
+)
+```
+
+## Sesion information
+
+```{r}
+sessioninfo::session_info()
+```
