@@ -14,5 +14,7 @@ Imports:
     dplyr,
     ggplot2,
     knitr,
+    sessioninfo,
+    tidyr,
     tidytuesdayR
 URL: https://github.com/sdgamboa/myTidyTuesday
