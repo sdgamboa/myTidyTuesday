@@ -1,0 +1,61 @@
+---
+title: "2024-10-01 Chess Game Dataset (Lichess)"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message=FALSE}
+library(tidytuesdayR)
+library(dplyr)
+library(forcats)
+library(ggplot2)
+```
+
+```{r, message=FALSE}
+dat <- tt_load('2024-10-01')$chess
+```
+
+```{r}
+glimpse(dat)
+```
+
+Create a summary of the frequency of the openings:
+
+```{r}
+sumDat <- dat |> 
+    count(opening_name) |> 
+    arrange(n) |> 
+    mutate(opening_name = fct_inorder(opening_name))
+```
+
+Create a plot of the top 20 most frequent openings:
+
+```{r}
+p <- sumDat |> 
+    tail(20) |> 
+    ggplot(aes(opening_name, n)) +
+    geom_col(fill = "firebrick3") +
+    theme_minimal() +
+    labs(
+        x = "Opening name",
+        y = "Frequency",
+        title = "Top 20 most frequent openings (Lichess)"
+    ) +
+    coord_flip()
+p
+```
+
+## Session information
+
+```{r}
+sessioninfo::session_info()
+```
+
+
+
+

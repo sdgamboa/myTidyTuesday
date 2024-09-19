@@ -12,6 +12,7 @@ LazyData: true
 Config/Needs/website: rmarkdown
 Imports: 
     dplyr,
+    forcats,
     ggplot2,
     knitr,
     sessioninfo,
