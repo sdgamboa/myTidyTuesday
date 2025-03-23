@@ -1,0 +1,77 @@
+---
+title: "2025-03-18"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Load packages:
+
+```{r setup}
+library(tidytuesdayR)
+library(dplyr)
+library(purrr)
+library(forcats)
+library(ggplot2)
+library(ggpubr)
+```
+
+Load data:
+
+```{r, message=FALSE}
+ttData <- tidytuesdayR::tt_load('2025-03-18')
+dat <- ttData$palmtrees
+dat
+```
+
+```{r}
+glimpse(dat)
+```
+
+Let's create a summary for all categorical variables with less than 10 elements:
+
+```{r}
+colNms <- dat |> 
+    map_if(.p = function(x) is.character(x) | is.factor(x), ~ unique(.x)) |> 
+    keep(~ length(.x) < 10) |> 
+    names()
+colNms <- colNms[colNms != "palm_subfamily"]
+datL <- vector("list", length(colNms))
+names(datL) <- colNms
+for (i in seq_along(datL)) {
+    datL[[i]] <- as.data.frame(table(dat[,colNms[i], drop = FALSE]))
+}
+```
+
+Let's create a plot for each of them:
+
+```{r}
+plots <- vector("list", length(colNms))
+for (i in seq_along(colNms)) {
+   plots[[i]] <- datL[[colNms[i]]] |> 
+       ggplot(aes(
+           x = reorder(.data[[colNms[i]]], -Freq),
+           y = Freq
+        )) +
+       geom_col(aes(fill = .data[[colNms[i]]])) +
+       xlab(colNms[i]) +
+       ylab("Count") +
+       theme_bw() +
+       theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+```
+
+
+```{r, fig.height=10, fig.width=15}
+ggarrange(
+    plotlist = plots
+)
+```
+
+```{r}
+sessioninfo::session_info()
+```
